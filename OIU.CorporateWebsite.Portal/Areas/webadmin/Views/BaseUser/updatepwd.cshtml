@@ -1,0 +1,62 @@
+﻿
+
+<form id="fm" method="post" novalidate>
+    <table cellpadding="5">
+        <tr class="fitem">
+            <td style="width: 80px;">请输入原密码:</td>
+            <td>
+                <input id="pwd" type="password" class="easyui-validatebox" data-options="required:true,missingMessage:'请输入原密码',validType:'length[6,12]'" style="width: 300px;">
+            </td>
+        </tr>
+        <tr class="fitem">
+            <td style="width: 80px;">请输入新密码:</td>
+            <td>
+                <input id="newpwd" type="password" class="easyui-validatebox" data-options="required:true,missingMessage:'请输入新密码',validType:'length[6,12]'" style="width: 300px;">
+            </td>
+        </tr>
+        <tr class="fitem">
+            <td style="width: 80px;">请重新输入新密码:</td>
+            <td>
+                <input id="confirmnewpwd" type="password" class="easyui-validatebox" data-options="required:true,missingMessage:'请重新输入新密码'" style="width: 300px;">
+            </td>
+        </tr>
+
+        <tr class="fitem">
+            <td style="text-align: center;" colspan="2">
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-save" onclick="save()">保存</a>
+            </td>
+        </tr>
+    </table>
+</form>
+
+<script type="text/javascript">
+
+    $(function() {
+        $('#confirmnewpwd').validatebox({
+            required: true,
+            validType: "equalTo['#newpwd']",
+            invalidMessage: '两次输入密码不匹配'
+        });
+    });
+
+    function save() {
+        var validate = $("#fm").form("validate");
+        if (validate == false) {
+            return false;
+        }
+        var posData = {
+            pwd: $("#pwd").val(),
+            newpwd: $('#newpwd').val(),
+            confirmnewpwd: $('#confirmnewpwd').val()
+        };
+        $.post('/webadmin/baseuser/updatepwd', posData, function (data) {
+            if (data == "ok") {
+                $.messager.alert('温馨提示', '修改成功！');
+                $('#fm').form('clear');
+            } else {
+                $.messager.alert("温馨提示", data, "info");
+            }
+        });
+    }
+
+</script>

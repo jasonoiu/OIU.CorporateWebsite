@@ -1,0 +1,16 @@
+﻿@model OIU.CorporateWebsite.Model.News
+
+@{ Html.RenderAction("SiteLeft", "SiteConfig");}
+<div class="ccright">
+    <div class="ctit3">您现在的位置是：<a href="/" target="_blank">首页</a> > @Html.ActionLink("新闻中心", "Index", "News")</div>
+    <div style="padding: 10px 30px; line-height: 200%;">
+
+        <div style="background-color: #f2f2f2; text-align: center; margin-bottom: 15px;">
+            <h3>@Model.NewsTitle</h3>
+            <span>发布时间：@Model.AddTime</span>
+        </div>
+        
+        @Html.Raw(Model.Contents)
+    </div>
+
+</div>

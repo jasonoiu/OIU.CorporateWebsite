@@ -1,0 +1,104 @@
+﻿@using OIU.CorporateWebsite.Model
+@model OIU.CorporateWebsite.Model.BaseUser
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>网站后台管理系统1.0</title>
+    <link href="~/Content/JqueryEasyUI/themes/default/easyui.css" rel="stylesheet" />
+    <script src="~/Content/JqueryEasyUI/jquery.min.js"></script>
+    <script src="~/Content/JqueryEasyUI/jquery.easyui.min.js"></script>
+    <script src="~/Scripts/OIU.CorporateWebsite.Main.js"></script>
+    <style>
+        ul.systemmenu
+        {
+            margin: 0;
+            padding: 0;
+        }
+
+            ul.systemmenu li
+            {
+                list-style-type: none;
+                line-height: 22px;
+                padding: 3px;
+            }
+
+                ul.systemmenu li a:link, ul.systemmenu li a:hover, ul.systemmenu li a:visited
+                {
+                    color: #000;
+                    text-decoration: none;
+                }
+                ul.systemmenu li:hover {
+                    background-color: #0081c2;cursor: pointer;
+                }
+    </style>
+</head>
+<body class="easyui-layout">
+    <div data-options="region:'north',border:false" style="height: 40px; background: #B3DFDA; padding: 10px">
+        <strong style="font-size: 14px;">网站后台管理系统1.0</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        @Model.UserName ,欢迎您！&nbsp;&nbsp;&nbsp;&nbsp;@Html.ActionLink("退出","Logout","Login")
+    </div>
+    <div data-options="region:'west',split:true,title:'功能菜单'" style="width: 200px;">
+        <div class="easyui-accordion" data-options="fit:true,border:false">
+
+            @foreach (var menu in ViewBag.MenuList as IQueryable<SystemMenu>)
+            {
+                if (menu.Pid != 0) { continue; }
+                <div title="@menu.MenuName" style="padding: 10px;">
+                    <ul class="systemmenu">
+                        @foreach (var m in ViewBag.MenuList as IQueryable<SystemMenu>)
+                        {
+                            if (m.Pid != menu.ID) { continue; }
+                            <li>
+                                <a class="menulink" href="javascript:void(0);" src="@m.MenuUrl">@m.MenuName</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div data-options="region:'south',border:false" style="height: 30px; background: #A9FACD; padding: 5px; text-align: center;">
+        CopyRight 2013 jason
+    </div>
+    <div data-options="region:'center',title:''">
+
+        <div id="tabs" class="easyui-tabs" data-options="fit:true,border:false,plain:true">
+        </div>
+
+    </div>
+
+    <script type="text/javascript">
+
+        function BindMenuClickEvent() {
+            $(".menulink").click(function() {
+                var href = $(this).attr("src");
+                var title = $(this).text();
+                var str = '<iframe id="frmWorkArea" width="100%" height="100%" frameborder="0" scrolling="yes" src="' + $(this).attr("src") + '"></iframe>';
+                var isExist = $("#tabs").tabs('exists', title);
+                if (!isExist) {
+                    $("#tabs").tabs('add', {
+                        title: title,
+                        content: str,
+                        closable: true
+                    });
+                } else {
+                    $("#tabs").tabs('select', title);
+                }
+                return false;
+            });
+        }
+
+        $(function () {
+            BindMenuClickEvent();
+        });
+    </script>
+
+</body>
+</html>

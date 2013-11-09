@@ -1,0 +1,28 @@
+﻿
+<script src="~/Content/JqueryEasyUI/plugins/jquery.edatagrid.js"></script>
+
+<table id="dg" style="width:700px;height:250px"
+       toolbar="#toolbar" pagination="true" idfield="ID"
+       rownumbers="true" fitcolumns="true" singleselect="true">
+    <thead>
+        <tr>
+            <th field="CName" width="50" editor="{type:'validatebox',options:{required:true}}">类别名称</th>
+        </tr>
+    </thead>
+</table>
+<div id="toolbar">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-add" plain="true" onclick="javascript:$('#dg').edatagrid('addRow')">添加新类别</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-remove" plain="true" onclick="javascript:$('#dg').edatagrid('destroyRow')">删除类别</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-save" plain="true" onclick="javascript:$('#dg').edatagrid('saveRow')">保存</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-undo" plain="true" onclick="javascript:$('#dg').edatagrid('cancelRow')">取消</a>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('#dg').edatagrid({
+            url: '/webadmin/PCategory/List',
+            saveUrl: '/webadmin/PCategory/Add',
+            updateUrl: '/webadmin/PCategory/Update',
+            destroyUrl: '/webadmin/PCategory/Delete'
+        });
+    });
+</script>

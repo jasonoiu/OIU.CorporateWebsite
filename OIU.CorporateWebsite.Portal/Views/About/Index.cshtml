@@ -1,0 +1,31 @@
+﻿@model OIU.CorporateWebsite.Model.About
+
+@{ Html.RenderAction("SiteLeft", "SiteConfig");}
+
+<div class="ccright">
+    <div class="ctit3">您现在的位置是：<a href="/" target="_blank">首页</a> > @Model.Title</div>
+    <div style="padding: 10px 30px; line-height: 200%;">
+        @Html.Raw(Model.Contents)
+    </div>
+    @*<div>
+        <div class="ctit3">产品推荐</div>
+
+        <div style="width: 240px; float: left; height: 190px;">
+            <table width="220" border="0">
+                <tbody>
+                    <tr>
+                        <td><a href="http://www.huatuojixie.com/pro_show.asp?id=14" title="轮式旋挖机">
+                            <img src="UploadFile/20133211512002.jpg" width="220" height="165" border="0" style="border: 1px #dddddd solid;"></a></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#f2f2f2" align="center"><a href="http://www.huatuojixie.com/pro_show.asp?id=14" title="轮式旋挖机">轮式旋挖机</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+
+    </div>*@
+
+</div>

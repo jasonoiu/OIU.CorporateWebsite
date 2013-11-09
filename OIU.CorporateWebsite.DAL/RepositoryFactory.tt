@@ -1,0 +1,45 @@
+﻿/* ==============================================================================
+ * 文件名称：RepositoryFactory
+ * 文件描述：使用TT模板生成数据库中所有表的库工厂
+ * 创建人：jason
+ * 创建时间：2013/10/17 20:40:59
+ * 修改人：
+ * 修改时间：
+ * 修改备注：
+ * @version 1.0
+ * ==============================================================================*/
+<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ include file="EF.Utility.CS.ttinclude"#>  
+<#@ output extension=".cs" #>
+<# CodeGenerationTools code = new CodeGenerationTools(this);
+MetadataLoader loader = new MetadataLoader(this);
+CodeRegion region = new CodeRegion(this, 1);
+MetadataTools ef = new MetadataTools(this);
+string inputFile = this.Host.ResolvePath(@"..\\OIU.CorporateWebsite.Model\\DataModel.edmx");
+EdmItemCollection ItemCollection = loader.CreateEdmItemCollection(inputFile);
+string namespaceName = code.VsNamespaceSuggestion();
+EntityFrameworkTemplateFileManager fileManager = EntityFrameworkTemplateFileManager.Create(this);
+#>
+using OIU.CorporateWebsite.IDAL;
+
+namespace OIU.CorporateWebsite.DAL
+{
+	public static class RepositoryFactory
+	{
+	<#
+	
+		//使用foreach循环遍历ItemCollection.GetItems<EntityType>集合
+
+		foreach(EntityType entity in ItemCollection.GetItems<EntityType>().OrderBy(e=>e.Name))
+
+		{ #>
+
+		public static I<#=entity.Name#>Repository <#=entity.Name#>Repository
+		{
+			get{return new <#=entity.Name#>Repository();}
+		}
+
+	 <#}#>
+	}
+
+}

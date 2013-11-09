@@ -1,0 +1,88 @@
+﻿@using OIU.CorporateWebsite.Model
+@model OIU.CorporateWebsite.Model.SiteConfig
+
+<script src="~/Content/xheditor/xheditor-1.2.1.min.js"></script>
+<script src="~/Content/xheditor/xheditor_lang/zh-cn.js"></script>
+
+<form id="fm" method="post" novalidate>
+    <table cellpadding="5">
+        <tr class="fitem">
+            <td style="width: 80px;">Seo-标题:</td>
+            <td>
+                @Html.EditorFor(m=>m.SeoTitle)
+            </td>
+        </tr>
+        <tr class="fitem">
+            <td style="width: 80px;">Seo-关键字:</td>
+            <td>@Html.EditorFor(m=>m.SeoKeywords)</td>
+        </tr>
+        <tr class="fitem">
+            <td style="width: 80px;">Seo-描述:</td>
+            <td><textarea id="SeoDesrciption" class="text-box" style="height: 80px;">@(Model.SeoDesrciption)</textarea></td>
+        </tr>
+        <tr class="fitem">
+            <td>网站LOGO:</td>
+            <td>
+                @Html.Partial("~/Areas/webadmin/Views/Files/ImageUpload.cshtml")
+            </td>
+        </tr>
+        <tr class="fitem">
+            <td>首页热线电话:</td>
+            <td><textarea id="DefaultHotline" name="DefaultHotline">@(Model.DefaultHotline)</textarea></td>
+        </tr>
+        <tr class="fitem">
+            <td>网站底部:</td>
+            <td><textarea id="SiteFooter" name="SiteFooter">@(Model.SiteFooter)</textarea></td>
+        </tr>
+        <tr class="fitem">
+            <td style="text-align: center;" colspan="2">
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-save" onclick="save()">保存</a>
+            </td>
+        </tr>
+    </table>
+</form>
+
+<script type="text/javascript">
+
+    $(function() {
+
+        $('#DefaultHotline').xheditor({
+            tools: 'Cut,Copy,Paste,Pastetext,|,Fontface,FontSize,Bold,Italic,Underline,Strikethrough,FontColor,BackColor,|,Align,Link,Unlink,|,Img,Source,Fullscreen',
+            skin: 'o2007silver', width: '650', height: '120', forcePtag: false,
+            upImgUrl: "/webadmin/files/upload", upImgExt: "jpg,jpeg,gif,png,bmp", html5Upload: false
+        });
+        
+        $('#SiteFooter').xheditor({
+            tools: 'Cut,Copy,Paste,Pastetext,|,Fontface,FontSize,Bold,Italic,Underline,Strikethrough,FontColor,BackColor,|,Align,Link,Unlink,|,Img,Source,Fullscreen',
+            skin: 'o2007silver', width: '650', height: '120', forcePtag: false,
+            upImgUrl: "/webadmin/files/upload", upImgExt: "jpg,jpeg,gif,png,bmp", html5Upload: false
+        });
+
+        //logo
+        $("#iucImg").attr("src", '@(Model.SiteLogo)');
+
+    });
+    
+
+    function save() {
+        var posData = {
+            ID: 1,
+            SeoTitle: $("#SeoTitle").val(),
+            SeoKeywords: $('#SeoKeywords').val(),
+            SeoDesrciption:$('#SeoDesrciption').val(),
+            SiteLogo: $("#iucImg").attr("src"),
+            DefaultHotline: $("#DefaultHotline").val(),
+            SiteFooter: $('#SiteFooter').val()
+        };
+        $.post('/webadmin/siteconfig/save', posData, function (data) {
+            if (data == "ok") {
+                $.messager.alert('温馨提示', '修改成功！');
+            } else {
+                $.messager.alert("温馨提示", "内容未更新！", "info");
+            }
+        });
+    }
+    
+
+</script>
+

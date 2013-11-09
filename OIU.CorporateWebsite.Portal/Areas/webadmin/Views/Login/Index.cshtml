@@ -1,0 +1,100 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>网站后台管理系统1.0</title>
+    <link href="~/Content/JqueryEasyUI/themes/bootstrap/easyui.css" rel="stylesheet" />
+    <script src="~/Content/JqueryEasyUI/jquery.min.js"></script>
+    <script src="~/Content/JqueryEasyUI/jquery.easyui.min.js"></script>
+    <script src="~/Content/JqueryEasyUI/plugins/jquery.validatebox.js"></script>
+    <script src="~/Content/JqueryEasyUI/locale/easyui-lang-zh_CN.js"></script>
+    <script src="~/Scripts/OIU.CorporateWebsite.Main.js"></script>
+    <style type="text/css">
+        #fm table tr td input{width: 185px;}
+    </style>
+</head>
+    <body>
+        <div style="width: 400px; margin: 50px auto; ">
+            <div class="easyui-panel" title="用户登录" style="padding:12px 15px;">
+                <form id="fm" method="post">
+                    <table style="width: 360px;">
+                        <tr>
+                            <td style="width: 55px;">用户名：</td>
+                            <td>
+                                <input class="easyui-validatebox tooltip-right tooltip-f" type="text" id="UserName" name="UserName" data-options="required:true,missingMessage:'请输入用户名'" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>密码：</td>
+                            <td>
+                                <input class="easyui-validatebox" type="password" id="PassWord" name="PassWord" data-options="required:true,missingMessage:'请输入密码'" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>验证码：</td>
+                            <td>
+                                <input class="easyui-validatebox" type="text" id="Code" name="Code" data-options="required:true,delay:1000" />
+                                <div style="margin: 3px 0 0 0; float: right; width: 100px;">
+                                    <img src="/Login/CheckCode?ID=1" id="imgCode" alt="单击可刷新" onclick="ClickRemoveChangeCode()" title="点击刷新"
+                                         style="cursor: pointer; " />
+                                    <a href="javascript:void(0)" onclick="ClickRemoveChangeCode();return false;">看不清</a>
+                                </div>
+                                
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="padding: 10px; text-align: center;">
+                                <a href="javascript:void(0)" class="easyui-linkbutton" id="btnLogin">登录</a>
+                            </td>
+                        </tr>
+                    </table>
+
+                </form>
+            </div>
+        </div>
+        
+        <script type="text/javascript">
+            //单击重新改变验证码
+            function ClickRemoveChangeCode() {
+                var imgCode = $("#imgCode");
+                var code = imgCode.attr("src");
+                imgCode.attr("src", code + "1");
+            }
+
+            $(function () {
+                //获取单击用户登录按钮的事件
+                $("#btnLogin").click(function () {
+                    var validate = $("#fm").form("validate");
+                    if (validate == false) {
+                        return false;
+                    }
+
+                    var postData = {
+                        UserName: $("#UserName").val(),
+                        PassWord: $("#PassWord").val(),
+                        Code: $("#Code").val()
+                    };
+
+                    //发送异步请求实现登录
+                    $.post("/webadmin/Login/CheckUserInfo", postData, function (data) {
+                        if (data == "登录成功") {
+                            window.location.href = "/webadmin/";
+                        } else {
+                            $.messager.alert("温馨提示", data, "info");
+                            $('#fm').form('clear');
+                        }
+
+                    });
+
+                });
+            });
+
+        </script>
+
+    </body>
+</html>

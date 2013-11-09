@@ -1,0 +1,20 @@
+﻿@using OIU.CorporateWebsite.Model
+@model OIU.CorporateWebsite.Model.About
+<div class="ccleft">
+    <ul class="lb">
+        @foreach (var pc in ViewBag.pcategoryList as IQueryable<PCategory>)
+        {
+            <li>@Html.ActionLink(pc.CName, "Category", "Product", new { cid = pc.ID }, null)</li>
+        }
+
+    </ul>
+    <!--ltit开始-->
+    <div class="tit">联系我们</div>
+    <!--ltit结束-->
+
+    <div style="">
+        @Html.Raw(Model.Contents) 
+    </div>
+
+
+</div>

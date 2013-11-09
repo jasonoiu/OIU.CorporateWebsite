@@ -1,0 +1,163 @@
+﻿@using OIU.CorporateWebsite.Model
+<script src="~/Content/xheditor/xheditor-1.2.1.min.js"></script>
+<script src="~/Content/xheditor/xheditor_lang/zh-cn.js"></script>
+
+<div style="width: 882px; padding: 8px; border: solid 1px #e6e6e6; background-color: #F5F5F5; margin-bottom: 10px; font-size: 12px;">
+    <strong>搜索条件</strong>&nbsp;&nbsp;&nbsp;&nbsp;
+    新闻关键字：<input id="sea_NewsTitle" type="text" />&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <a id="btnsearch" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-search'">搜索</a>
+</div>
+
+<table id="dg" title="" class="easyui-datagrid" style="width: 900px; height: 800px" toolbar="#toolbar" pagination="true"
+       rownumbers="true" fitcolumns="true" singleselect="true"></table>
+<div id="toolbar">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-add" plain="true" onclick="add()">添加新闻</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-edit" plain="true" onclick="edit()">修改新闻</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-remove" plain="true" onclick="destroy()">删除新闻</a>
+</div>
+
+<div id="dlg" class="easyui-dialog" style="width: 900px; height: 600px; padding: 10px 20px"
+     closed="true" buttons="#dlg-buttons" data-options="resizable:true,modal:true">
+    <div class="ftitle">新闻信息</div>
+    <form id="fm" method="post" novalidate>
+        <table cellpadding="5">
+            <tr class="fitem">
+                <td style="width: 80px;">新闻标题:</td>
+                <td><input id="dialog-NewsTitle" name="dialog-NewsTitle" class="easyui-validatebox" data-options="required:true,missingMessage:'请输入新闻标题'" style="width: 300px;"></td>
+            </tr>
+            @*<tr class="fitem">
+                    <td>新闻图片:</td>
+                    <td>
+                        @Html.Partial("~/Areas/webadmin/Views/Files/ImageUpload.cshtml")
+                    </td>
+                </tr>*@
+            <tr class="fitem">
+                <td>新闻内容:</td>
+                <td><textarea id="dialog-Contents" name="dialog-Contents"></textarea></td>
+            </tr>
+        </table>
+        <input id="dialog-ID" type="hidden" />
+    </form>
+</div>
+<div id="dlg-buttons">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-save" onclick="save()">保存</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')">取消</a>
+</div>
+<script type="text/javascript">
+
+    $(function () {
+        $("#dg").datagrid({
+            url: '/webadmin/news/GetAllnews',
+            columns: [[
+                {
+                    field: 'NewsTitle',
+                    title: '新闻标题',
+                    width: 120
+                },
+                //{
+                //    field: 'PImg',
+                //    title: '新闻图片',
+                //    width: 40,
+                //    formatter: function (value, row, index) {
+                //        return "<img src='" + value + "' width=50 />";
+                //    },
+                //    styler: function (value, row, index) {
+                //        return 'text-align:center;';
+                //    }
+                //},
+                {
+                    field: 'AddTime',
+                    title: '添加时间',
+                    width: 60,
+                    formatter: function (value, row, index) {
+                        return formatJSONDate(value);
+                    }
+                }
+            ]],
+            queryParams: {
+                NewsTitle: $("#sea_NewsTitle").val()
+            }
+        });
+        $('#dialog-Contents').xheditor({
+            tools: 'Cut,Copy,Paste,Pastetext,|,Fontface,FontSize,Bold,Italic,Underline,Strikethrough,FontColor,BackColor,|,Align,Link,Unlink,|,Img,Source,Fullscreen',
+            skin: 'o2007silver', width: '650', height: '280', forcePtag: false,
+            upImgUrl: "/webadmin/files/upload", upImgExt: "jpg,jpeg,gif,png,bmp", html5Upload: false
+        });
+        //search
+        $("#btnsearch").click(function () {
+            $("#dg").datagrid('load', {
+                NewsTitle: $("#sea_NewsTitle").val()
+            });
+        });
+    });
+
+    var url;
+    function add() {
+        $('#dlg').dialog('open').dialog('setTitle', '添加新闻');
+        $('#fm').form('clear');
+        $("#dialog-Contents").val('');
+        //$("#iucImg").attr("src", '');
+        //resetUploadImg();
+        url = '/webadmin/news/Addnews';
+    }
+    function edit() {
+        var sel = $('#dg').datagrid('getSelected');
+        if (sel == null) {
+            $.messager.alert("温馨提示", "请选择要编辑的新闻！", "info");
+            return false;
+        }
+        $('#dlg').dialog('open').dialog('setTitle', '编辑新闻');
+        $.get("/webadmin/news/GetnewsInfo", { id: sel.ID }, function (newsInfo) {
+            $("#dialog-NewsTitle").val(newsInfo.NewsTitle);
+            //$("#iucImg").attr("src", newsInfo.PImg).show();
+            $("#dialog-Contents").val(newsInfo.Contents);
+            $("#dialog-ID").val(newsInfo.ID);
+        });
+        url = "/webadmin/news/UpdatenewsInfo";
+    }
+
+    function save() {
+        var validate = $("#fm").form("validate");
+        if (validate == false) {
+            return false;
+        }
+        var posData = {
+            ID: $("#dialog-ID").val(),
+            NewsTitle: $("#dialog-NewsTitle").val(),
+            //PCid: $('#dialog-PCid').combobox('getValue'),
+            //PImg: $("#iucImg").attr("src"),
+            Contents: $("#dialog-Contents").val()
+        };
+        $.post(url, posData, function (data) {
+            if (data == "ok") {
+                $("#dlg").dialog('close');
+                $("#dg").datagrid("reload");
+            } else {
+                $.messager.alert("温馨提示", "内容未更新！", "info");
+            }
+        });
+    }
+    function destroy() {
+        var row = $('#dg').datagrid('getSelected');
+        if (row) {
+            $.messager.confirm('温馨提示', '真的要删除此新闻吗?', function (r) {
+                if (r) {
+                    $.post('/webadmin/news/Deletenews', { ID: row.ID }, function (result) {
+                        if (result == 'ok') {
+                            $('#dg').datagrid('reload');    // reload the user data
+                        } else {
+                            $.messager.show({    // show error message
+                                title: 'Error',
+                                msg: result
+                            });
+                        }
+                    });
+                }
+            });
+        } else {
+            $.messager.alert("温馨提示", "请选择要删除的新闻！", "info");
+        }
+    }
+</script>
+

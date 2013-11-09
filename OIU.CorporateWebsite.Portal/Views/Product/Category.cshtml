@@ -1,0 +1,41 @@
+﻿@using OIU.CorporateWebsite.Model
+@using OIU.MvcPager
+@model PagedList<OIU.CorporateWebsite.Model.Product>
+
+@section head
+{@{Html.RegisterMvcPagerCssResource();}}
+@{ Html.RenderAction("SiteLeft", "SiteConfig");}
+
+<div class="ccright">
+    <div class="ctit3">
+        您现在的位置是：<a href="/" target="_blank">首页</a> > @Html.ActionLink("产品展示", "Index", "Product") > @Html.ActionLink(((PCategory)ViewBag.pc).CName, "Category")
+        
+    </div>
+    <div id="productlist" style="padding: 10px 0 10px 15px; line-height: 200%;">
+        <ul>
+            @foreach (var m in Model)
+            {
+                <li>
+                    <a href="@Url.Action("Details","Product",new{id=m.ID})" class="pimg">
+                        <img src="@m.PImg" alt="@m.PName" />
+                    </a>
+                    @Html.ActionLink(m.PName, "Details", "Product", new { id = m.ID }, new { @class = "pname" })
+                </li>
+            }
+            <div class="clear"></div>
+        </ul>
+
+    </div>
+
+    @Html.Pager(Model, new PagerOptions
+                            {
+                                PageIndexParameterName = "pageIndex",
+                                CurrentPagerItemWrapperFormatString = "<span class=\"current\">{0}</span>",
+                                AutoHide = false,
+                                FirstPageRouteName = "pcategory"
+                            }, "pcategoryPage", null,
+                       new { id = "badoopager" })
+
+</div>
+@section scripts
+{@{Html.RegisterMvcPagerScriptResource();}}

@@ -1,0 +1,42 @@
+﻿@{
+    Layout = null;
+}
+
+<script src="~/Content/uploadify/jquery.uploadify.js"></script>
+<link href="~/Content/uploadify/uploadify.css" rel="stylesheet" />
+<div id="ImgUploadControl">
+    <img id="iucImg" alt="上传的图片"/>
+    <input type="file" name="file_upload" id="file_upload" />
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        var iucImg = $("#iucImg");
+        $('#file_upload').uploadify({
+            'swf': '/Content/uploadify/uploadify.swf',
+            'uploader': '/webadmin/files/upload',
+            'buttonText': '上传图片',
+            'fileTypeDesc': '请选择要上传的图片...',
+            'fileTypeExts': '*.gif; *.jpg; *.png',
+            'uploadLimit': 1,
+            'onUploadSuccess': function (file, data, response) {
+                var result = eval('(' + unescape(data) + ')');
+                if (result.err == '') {
+                    iucImg.attr('src', result.msg).show();
+                } else {
+                    $.messager.alert("友情提示", "上传发生错误！", "error");
+                }
+            }
+        });
+        resetUploadImg();
+    });
+
+    function resetUploadImg() {
+        var iucImg = $("#iucImg");
+        if (iucImg.attr("src") != "" && iucImg.attr("src") != undefined) {
+            iucImg.show();
+        } else {
+            iucImg.hide();
+        }
+    }
+</script>

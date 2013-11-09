@@ -1,0 +1,49 @@
+﻿@using OIU.CorporateWebsite.Model
+@model OIU.CorporateWebsite.Model.About
+
+
+<div class="fivecenter">
+    <div class="fivecenter_head">
+        最新新闻
+        <span class="more">@Html.ActionLink("more>>", "Index", "News")</span>
+    </div>
+    <ul class="fivecenter_body">
+        @foreach (var m in ViewBag.newsList as IQueryable<News>)
+        {
+            <li>
+                @Html.ActionLink(m.NewsTitle, "Details", "News", new { id = m.ID }, "")
+            </li>
+        }
+    </ul>
+
+</div>
+
+<div class="fivecenter" style="margin-right: 0;float: right;">
+    <div class="fivecenter_head">
+        公司简介
+        <span class="more">@Html.RouteLink("more>>", "about", new { idname = "CompanyProfile" })</span>
+    </div>
+    <div class="fivecenter_body">
+        @Html.Raw(Model.Contents)
+    </div>
+
+</div>
+<div class="clear10"></div>
+<div class="fenlei">
+    <div class="fenl">
+        最新产品
+    </div>
+    <span class="more">@Html.ActionLink("more>>", "Index", "Product")</span>
+</div>
+<ul class="indexListContent">
+    @foreach (var m in ViewBag.productList as IQueryable<Product>)
+    {
+        <li>
+            <a href="@Url.Action("Details","Product",new{id=m.ID})" class="pimg">
+                <img src="@m.PImg" alt="@m.PName" />
+            </a>
+            @Html.ActionLink(m.PName, "Details", "Product", new { id = m.ID }, new { @class = "pname" })
+        </li>
+    }
+    <div class="clear"></div>
+</ul>

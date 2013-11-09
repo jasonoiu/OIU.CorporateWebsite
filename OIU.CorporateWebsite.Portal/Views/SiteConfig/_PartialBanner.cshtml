@@ -1,0 +1,32 @@
+﻿@using OIU.CorporateWebsite.Model
+<!--banner begin-->
+<div class="bannerbj">
+    <div class="top-banner" id="banner">
+        @foreach (var banner in ViewBag.bannerList as IQueryable<Banner>)
+        {
+            <a href="@banner.ImgLink">
+                <img src="@banner.ImgUrl" alt="@banner.ImgTitle"/>
+            </a>
+        }
+    </div>
+    <div class="tabBox">
+        <ul id="btn"></ul>
+    </div>
+</div>
+
+<!--banner end-->
+<div class="fenlei">
+    <!--fenl开始-->
+    <div class="fenl">产品分类快速导航</div>
+    <!--fenl结束-->
+    <!--fenr开始-->
+    <div class="fenr">
+
+        @foreach (var pc in ViewBag.pcategoryList as IQueryable<PCategory>)
+        {
+            @Html.ActionLink(pc.CName, "Category", "Product", new { cid = pc.ID }, null) @(" | ")
+        }
+
+    </div>
+    <!--fenr结束-->
+</div>

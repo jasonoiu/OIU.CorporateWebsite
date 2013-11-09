@@ -1,0 +1,64 @@
+﻿@using OIU.CorporateWebsite.Model
+@using OIU.MvcPager
+@model OIU.CorporateWebsite.Model.Product
+
+@section head
+{
+    <script src="~/Content/MVCPager/MvcPager.min.js"></script>
+    <link href="~/Content/MVCPager/pagerstyles.min.css" rel="stylesheet" />
+}
+@{ Html.RenderAction("SiteLeft", "SiteConfig");}
+<div class="ccright">
+    <div class="ctit3">您现在的位置是：<a href="/" target="_blank">首页</a> > @Html.ActionLink("产品展示", "Index", "Product") > 
+        @Html.ActionLink(((PCategory)ViewBag.pc).CName, "Category", new { cid = ((PCategory)ViewBag.pc).ID })</div>
+    <div style="padding: 10px 0 10px 15px; line-height: 200%;">
+
+        <div style="background-color: #f2f2f2; text-align: center; margin-bottom: 15px;">
+            <h3>@Model.PName</h3>
+        </div>
+
+        @Html.Raw(Model.PContent)
+        
+        
+        <div id="productlist" style=" line-height: 200%;">
+            <p style="border-bottom: 1px dashed #ccc;">
+                <strong>相关产品</strong>
+            </p>
+            <ul>
+                @foreach (var m in ViewBag.prelation as PagedList<Product>)
+                {
+                    <li>
+                        <a href="@Url.Action("Details","Product",new{id=m.ID})" class="pimg">
+                            <img src="@m.PImg" alt="@m.PName" />
+                        </a>
+                        @Html.ActionLink(m.PName, "Details", "Product", new { id = m.ID }, new { @class = "pname" })
+                    </li>
+                }
+                <div class="clear"></div>
+            </ul>
+            
+            @Html.Pager(ViewBag.prelation as PagedList<Product>, new PagerOptions
+            {
+                PageIndexParameterName = "pageIndex",
+                CurrentPagerItemWrapperFormatString = "<span class=\"current\">{0}</span>",
+                AutoHide = false,
+                FirstPageRouteName = "default"
+            }, "detailspager", null,
+                new { id = "badoopager" })
+        </div>
+
+        
+    </div>
+
+</div>
+@section scripts
+{
+    <script type="text/javascript">
+        $(function() {
+            if ($("#productlist ul li").length == 0) {
+                $("#productlist").hide();
+            }
+        });
+    </script>
+
+}

@@ -1,0 +1,39 @@
+﻿@using OIU.CorporateWebsite.Model
+@using OIU.MvcPager
+@model PagedList<OIU.CorporateWebsite.Model.Product>
+
+@section head
+{
+    <script src="~/Content/MVCPager/MvcPager.min.js"></script>
+    <link href="~/Content/MVCPager/pagerstyles.min.css" rel="stylesheet" />
+}
+@{ Html.RenderAction("SiteLeft", "SiteConfig");}
+
+<div class="ccright">
+    <div class="ctit3">您现在的位置是：<a href="/" target="_blank">首页</a> > @Html.ActionLink("产品展示", "Index", "Product") </div>
+    <div id="productlist" style="padding: 10px 0 10px 15px; line-height: 200%;">
+        <ul>
+            @foreach (var m in Model)
+            {
+                <li>
+                    <a href="@Url.Action("Details","Product",new{id=m.ID})" class="pimg">
+                        <img src="@m.PImg" alt="@m.PName" />
+                    </a>
+                    @Html.ActionLink(m.PName, "Details", "Product", new { id = m.ID }, new { @class = "pname" })
+                </li>
+            }
+            <div class="clear"></div>
+        </ul>
+
+    </div>
+
+    @Html.Pager(Model, new PagerOptions
+                            {
+                                PageIndexParameterName = "id",
+                                CurrentPagerItemWrapperFormatString = "<span class=\"current\">{0}</span>",
+                                AutoHide = false,FirstPageRouteName ="default"
+                            }, "pager", null,
+                       new { id = "badoopager" })
+
+</div>
+

@@ -1,0 +1,19 @@
+﻿@model IQueryable<OIU.CorporateWebsite.Model.Banner>
+
+@{ Html.RenderAction("SiteLeft", "SiteConfig");}
+<div class="ccright">
+    <div class="ctit3">您现在的位置是：<a href="/" target="_blank">首页</a> > @Html.ActionLink("工作现场", "Index", "Case")</div>
+    <div style="padding: 10px 30px; line-height: 200%;">
+
+        <ul id="caseul">
+            @foreach (var m in Model)
+            {
+                <li>
+                    <img src="@m.ImgUrl" alt=""/>
+                </li>
+            }
+        </ul>
+
+    </div>
+
+</div>

@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="06c43e588bc14791aa0b11f5550b2eda" Name="关系图1" ZoomLevel="100" >
+        <EntityTypeShape EntityType="DataModel.Role" Width="1.5" PointX="3.75" PointY="1.5" />
+        <EntityTypeShape EntityType="DataModel.BaseUser" Width="1.5" PointX="1.625" PointY="1.5" />
+        <EntityTypeShape EntityType="DataModel.Product" Width="1.5" PointX="5.75" PointY="1.5" />
+        <EntityTypeShape EntityType="DataModel.PCategory" Width="1.5" PointX="7.5" PointY="1.5" />
+        <EntityTypeShape EntityType="DataModel.SystemMenu" Width="1.5" PointX="9.375" PointY="1.5" />
+        <EntityTypeShape EntityType="DataModel.About" Width="1.5" PointX="1.625" PointY="5.125" />
+        <EntityTypeShape EntityType="DataModel.Banner" Width="1.5" PointX="3.5" PointY="5.125" />
+        <EntityTypeShape EntityType="DataModel.SiteConfig" Width="1.5" PointX="5.625" PointY="5.125" />
+        <EntityTypeShape EntityType="DataModel.News" Width="1.5" PointX="7.625" PointY="5.125" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

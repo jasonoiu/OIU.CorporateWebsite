@@ -1,0 +1,189 @@
+﻿@using OIU.CorporateWebsite.Model
+
+<div style="width: 882px; padding: 8px; border: solid 1px #e6e6e6; background-color: #F5F5F5; margin-bottom: 10px; font-size: 12px;">
+
+    类别：
+    <select id="sea-ImgCategory" class="easyui-combobox" style="width:100px;">
+        <option value="Banner">Banner图片</option>
+        <option value="工作现场">工作现场</option>
+    </select>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <a id="btnsearch" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-search'" >图片查询</a>
+</div>
+
+<table id="dg" title="" class="easyui-datagrid" style="width: 900px; height: 600px" toolbar="#toolbar" pagination="true"
+       rownumbers="true" fitcolumns="true" singleselect="true"></table>
+<div id="toolbar">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-add" plain="true" onclick="add()">添加</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-edit" plain="true" onclick="edit()">修改</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-remove" plain="true" onclick="destroy()">删除</a>
+</div>
+
+<div id="dlg" class="easyui-dialog" style="width: 900px; height: 400px; padding: 10px 20px"
+     closed="true" buttons="#dlg-buttons" data-options="resizable:true,modal:true">
+    <form id="fm" method="post" novalidate>
+        <table cellpadding="5">
+            <tr class="fitem">
+                <td style="width: 80px;">图片名称:</td>
+                <td><input id="dialog-ImgTitle" name="dialog-ImgTitle" style="width: 300px;"></td>
+            </tr>
+            <tr class="fitem">
+                <td>上传图片:</td>
+                <td>
+                    @Html.Partial("~/Areas/webadmin/Views/Files/ImageUpload.cshtml")
+                </td>
+            </tr>
+            <tr class="fitem">
+                <td>图片类别:</td>
+                <td>
+                    <select id="dialog-ImgCategory" class="easyui-combobox" style="width: 300px;">
+                        <option value="">请选择类别</option>
+                        <option value="Banner">Banner图片</option>
+                        <option value="工作现场">工作现场</option>
+                    </select>
+                </td>
+            </tr>
+            <tr class="fitem">
+                <td>链接地址:</td>
+                <td><input id="dialog-ImgLink" name="dialog-ImgLink" style="width: 300px;"></td>
+            </tr>
+        </table>
+        <input id="dialog-ID" type="hidden" />
+    </form>
+</div>
+<div id="dlg-buttons">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-save" onclick="save()">保存</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')">取消</a>
+</div>
+<script type="text/javascript">
+
+    $(function () {
+        $("#dg").datagrid({
+            url: '/webadmin/Banner/list',
+            columns: [[
+                {
+                    field: 'ImgTitle',
+                    title: '图片名称',
+                    width: 120
+                },
+                {
+                    field: 'ImgUrl',
+                    title: 'Banner图片',
+                    width: 60,
+                    formatter: function (value, row, index) {
+                        return "<img src='" + value + "' width=50 />";
+                    },
+                    styler: function (value, row, index) {
+                        return 'text-align:center;';
+                    }
+                },
+                {
+                    field: 'ImgLink',
+                    title: '链接地址',
+                    width: 120
+                },
+                {
+                    field: 'ImgCategory',
+                    title: '图片类别',
+                    width: 50
+                }
+            ]],
+            queryParams: {
+                ImgCategory: $("#sea-ImgCategory").combobox('getValue')
+            }
+        });
+        
+        //search
+        $("#btnsearch").click(function () {
+            $("#dg").datagrid('load', {
+                ImgCategory: $("#sea-ImgCategory").combobox('getValue')
+            });
+        });
+        
+    });
+
+    var url;
+    function add() {
+        $('#dlg').dialog('open').dialog('setTitle', '添加');
+        $('#fm').form('clear');
+        $("#iucImg").attr("src", '');
+        resetUploadImg();
+        $('#dialog-ImgCategory').combobox('setValue', '');
+        url = '/webadmin/banner/add';
+    }
+    function edit() {
+        var sel = $('#dg').datagrid('getSelected');
+        if (sel == null) {
+            $.messager.alert("温馨提示", "请选择要编辑的图片！", "info");
+            return false;
+        }
+        $('#dlg').dialog('open').dialog('setTitle', '编辑');
+        $.get("/webadmin/banner/GetInfo", { id: sel.ID }, function (info) {
+            $("#dialog-ImgTitle").val(info.ImgTitle);
+            $('#dialog-ImgLink').val(info.ImgLink);
+            $("#iucImg").attr("src", info.ImgUrl).show();
+            $("#dialog-ID").val(info.ID);
+            $('#dialog-ImgCategory').combobox('setValue', info.ImgCategory);
+        });
+        url = "/webadmin/banner/Update";
+    }
+
+    function save() {
+        var imgUrl = $("#iucImg").attr("src");
+        if (imgUrl == ''||imgUrl==undefined) {
+            $.messager.alert("温馨提示", "请上传图片！", "info");
+            return false;
+        }
+        var imgCategory = $('#dialog-ImgCategory').combobox('getValue');
+        if (imgCategory == '') {
+            $.messager.alert("温馨提示", "请选择图片类别！", "info");
+            return false;
+        }
+
+        var posData = {
+            ID: $("#dialog-ID").val(),
+            ImgTitle: $("#dialog-ImgTitle").val(),
+            ImgLink: $('#dialog-ImgLink').val(),
+            ImgUrl: imgUrl,
+            ImgCategory: imgCategory
+        };
+        $.post(url, posData, function (data) {
+            if (data == "ok") {
+                //$.messager.alert('温馨提示', '更新成功！');
+                $("#dlg").dialog('close');
+                $("#dg").datagrid("reload");
+            } else {
+                $.messager.alert("温馨提示", "发生错误，请确保图片已上传，也已选择图片类别！", "info");
+            }
+        });
+    }
+    function destroy() {
+        var row = $('#dg').datagrid('getSelected');
+        if (row) {
+            $.messager.confirm('温馨提示', '真的要删除此产品吗?', function (r) {
+                if (r) {
+                    $.post('/webadmin/banner/Delete', { ID: row.ID }, function (result) {
+                        if (result == 'ok') {
+                            $('#dg').datagrid('reload');    // reload the user data
+                        } else {
+                            $.messager.show({    // show error message
+                                title: 'Error',
+                                msg: result
+                            });
+                        }
+                    });
+                }
+            });
+        } else {
+            $.messager.alert("温馨提示", "请选择要删除的产品！", "info");
+        }
+    }
+</script>
+
+
+
+    
+
+
+
+

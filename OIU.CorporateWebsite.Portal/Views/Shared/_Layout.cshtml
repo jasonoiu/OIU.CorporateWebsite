@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    @{ Html.RenderAction("Seo", "SiteConfig");}
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width" />
+    <link href="~/Content/Site.min.css" rel="stylesheet" />
+    <link href="~/Content/JqueryCycle/css/style.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.8.2.min.js"></script>
+    <script src="~/Content/JqueryCycle/js/jquery.cycle.min.js"></script>
+    <script src="~/Scripts/OIU.CorporateWebsite.Main.min.js"></script>
+    @RenderSection("head", required: false)
+
+    <!--[if IE 6]>
+            <script src="~/Content/JqueryCycle/js/iepng.js"></script>
+            <script type="text/javascript">
+               EvPNG.fix('div, ul,li, input,h1,a,a:hover,#subNavBj .subNav ul li');
+            </script>
+        <![endif]-->
+
+</head>
+<body>
+    <!--header开始-->
+    <div class="header">
+        @{ Html.RenderAction("Logo", "SiteConfig");}
+    </div>
+    <!--header结束-->
+    <!--menu开始-->
+    <div class="clear"></div>
+    <div class="menu">
+        <ul class="me">
+            <li><a href="/">网站首页</a></li>
+            <li>@Html.RouteLink("公司简介", "about", new { idname = "CompanyProfile" })  </li>
+            <li>@Html.ActionLink("产品展示", "Index", "Product")</li>
+            <li>@Html.ActionLink("新闻中心", "Index", "News")</li>
+            <li>@Html.ActionLink("工作现场", "Index", "Case")</li>
+            <li>@Html.RouteLink("厂房形象", "about", new { idname = "PlantImage" })</li>
+            <li>@Html.RouteLink("联系我们", "about", new { idname = "ContactUs" })</li>
+        </ul>
+    </div>
+    <!--menu结束-->
+    @{ Html.RenderAction("Banner", "SiteConfig");}
+    <div class="cont">
+        @RenderBody()
+    </div>
+    <div class="clear"></div>
+    <div class="footer">
+        @{ Html.RenderAction("Footer", "SiteConfig");}
+    </div>
+
+
+    <script type="text/javascript">
+        $(function () {
+            $('#banner').cycle({
+                fx: 'scrollLeft',
+                pager: '#btn',
+                speed: 1000
+            });
+
+        });
+
+    </script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

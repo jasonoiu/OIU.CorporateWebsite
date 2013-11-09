@@ -1,0 +1,98 @@
+﻿@{
+    ViewBag.Title = "用户注册";
+}
+
+<form id="ff" method="post" novalidate="novalidate">
+
+    <fieldset>
+
+        <legend>用户注册</legend>
+
+        <table id="tblAdd">
+
+            <tr>
+
+                <td>
+                    <label for="UserName">登录名：</label></td>
+
+                <td>
+
+                    <input class="easyui-validatebox" type="text" id="UserName" name="UserName" data-options="required:true,validType:'length[1,32]'" />
+
+                </td>
+
+                <td>
+                    <label for="RealName">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;真实姓名：</label></td>
+
+                <td>
+
+                    <input class="easyui-validatebox" type="text" id="RealName" name="RealName" data-options="required:true,validType:'length[1,200]'" />
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td>
+                    <label for="UserPassword">密码：</label></td>
+
+                <td>
+
+                    <input class="easyui-validatebox" type="text" id="Password" name="Password" data-options="required:true,validType:'length[1,200]'" />
+
+                </td>
+
+                <td>
+                    <label for="OKUserPassword">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;确认密码：</label></td>
+
+                <td>
+
+                    <input class="easyui-validatebox" type="text" id="OKUserPassword" name="OKUserPassword" data-options="required:true" validtype="equalTo['UserPassword']" invalidmessage="两次输入的密码不匹配" />
+
+                </td>
+
+            </tr>
+            <tr>
+
+                <td colspan="4" style="text-align: center; padding-top: 10px">
+
+                    <a href="javascript:void(0)" class="easyui-linkbutton" id="btnRegist" iconcls="icon-save">确定</a>
+
+                    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript:$('#AddUserDialog').dialog('close')">关闭</a>
+
+                </td>
+
+            </tr>
+
+        </table>
+
+    </fieldset>
+</form>
+
+@section scripts
+{
+    <script type="text/javascript">
+        //绑定注册按钮的事件
+        function bindRegisteButtonClickEvent() {
+            $("#btnRegist").click(function () {
+                //序列化表单值
+                var postData = $("#ff").serializeArray();
+                //提交
+                $.post("/UserInfo/RegisterUser", postData, function(data) {
+                    if (data == "OK") {
+                        $('#ff').form('clear');//清空
+                        alert("添加成功");
+                    } else {
+                        alert(data);
+                    }
+                });
+            });
+        }
+
+        $(function() {
+            bindRegisteButtonClickEvent();
+        });
+
+    </script>
+}

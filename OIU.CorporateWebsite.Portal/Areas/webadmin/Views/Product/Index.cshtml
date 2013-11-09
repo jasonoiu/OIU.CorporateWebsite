@@ -1,0 +1,211 @@
+﻿@using OIU.CorporateWebsite.Model
+
+<script src="~/Content/xheditor/xheditor-1.2.1.min.js"></script>
+<script src="~/Content/xheditor/xheditor_lang/zh-cn.js"></script>
+
+<div style="width: 882px; padding: 8px; border: solid 1px #e6e6e6; background-color: #F5F5F5; margin-bottom: 10px; font-size: 12px;">
+    <strong>搜索条件</strong>&nbsp;&nbsp;&nbsp;&nbsp;
+    产品名称：<input id="sea_PName" type="text"/>&nbsp;&nbsp;&nbsp;&nbsp;
+    产品类别：
+    <select id="sea-PCid" class="easyui-combobox" data-options="required:true,missingMessage:'请输入产品类型'" style="width:100px;">
+        <option value="">全部产品</option>
+        @foreach (var m in ViewBag.PCategoryList as IQueryable<PCategory>)
+        {
+            <option value="@m.ID">@m.CName</option>
+        }
+    </select>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <a id="btnsearch" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-search'" >产品查询</a>
+</div>
+
+<table id="dg" title="" class="easyui-datagrid" style="width: 900px; height: 800px" toolbar="#toolbar" pagination="true"
+       rownumbers="true" fitcolumns="true" singleselect="true"></table>
+<div id="toolbar">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-add" plain="true" onclick="newUser()">添加产品</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-edit" plain="true" onclick="editUser()">修改产品</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-remove" plain="true" onclick="destroyUser()">删除产品</a>
+</div>
+
+<div id="dlg" class="easyui-dialog" style="width: 900px; height: 600px; padding: 10px 20px"
+     closed="true" buttons="#dlg-buttons" data-options="resizable:true,modal:true">
+    <div class="ftitle">产品信息</div>
+    <form id="fm" method="post" novalidate>
+        <table cellpadding="5">
+            <tr class="fitem">
+                <td style="width: 80px;">产品名称:</td>
+                <td><input id="dialog-PName" name="dialog-PName" class="easyui-validatebox" data-options="required:true,missingMessage:'请输入产品名称'" style="width: 300px;"></td>
+            </tr>
+            <tr class="fitem">
+                <td>产品类型:</td>
+                <td>
+                    <select id="dialog-PCid" class="easyui-combobox easyui-validatebox" data-options="required:true,missingMessage:'请输入产品类型'" style="width:303px;">
+                        @foreach (var m in ViewBag.PCategoryList as IQueryable<PCategory>)
+                        {
+                            <option value="@m.ID">@m.CName</option>
+                        }
+                    </select>
+                </td>
+            </tr>
+            <tr class="fitem">
+                <td>产品图片:</td>
+                <td>
+                    @Html.Partial("~/Areas/webadmin/Views/Files/ImageUpload.cshtml")
+                </td>
+            </tr>
+            <tr class="fitem">
+                <td>是否推荐:</td>
+                <td><input id="dialog-IsRecommend" type="checkbox" /></td>
+            </tr>
+            <tr class="fitem">
+                <td>产品内容:</td>
+                <td><textarea id="dialog-PContent" name="dialog-PContent"></textarea></td>
+            </tr>
+        </table>
+        <input id="dialog-ID" type="hidden" />
+    </form>
+</div>
+<div id="dlg-buttons">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-save" onclick="saveUser()">保存</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')">取消</a>
+</div>
+<script type="text/javascript">
+
+    $(function () {
+        $("#dg").datagrid({
+            url: '/webadmin/product/GetAllProduct',
+            columns: [[
+                {
+                    field: 'PName',
+                    title: '产品名称',
+                    width: 120
+                },
+                {
+                    field: 'PCid',
+                    title: '产品类型',
+                    width: 40
+                },
+                {
+                    field: 'PImg',
+                    title: '产品图片',
+                    width: 40,
+                    formatter: function (value, row, index) {
+                        return "<img src='" + value + "' width=50 />";
+                    },
+                    styler: function (value, row, index) {
+                        return 'text-align:center;';
+                    }
+                },
+                {
+                    field: 'IsRecommend',
+                    title: '是否推荐',
+                    width: 40,
+                    formatter: function (value, row, index) {
+                        if (value) return '是';
+                        else return '否';
+                    },
+                    styler: function (value, row, index) {
+                        return 'text-align:center;';
+                    }
+                },
+                {
+                    field: 'AddTime',
+                    title: '添加时间',
+                    width: 60,
+                    formatter: function (value, row, index) {
+                        return formatJSONDate(value);
+                    }
+                }
+            ]],
+            queryParams: {
+                PName: $("#sea_PName").val(),
+                PCid: $("#sea-PCid").combobox('getValue')
+            }
+        });
+        $('#dialog-PContent').xheditor({
+            tools: 'Cut,Copy,Paste,Pastetext,|,Fontface,FontSize,Bold,Italic,Underline,Strikethrough,FontColor,BackColor,|,Align,Link,Unlink,|,Img,Source,Fullscreen',
+            skin: 'o2007silver', width: '650', height: '280', forcePtag: false,
+            upImgUrl: "/webadmin/files/upload", upImgExt: "jpg,jpeg,gif,png,bmp", html5Upload: false
+        });
+        //search
+        $("#btnsearch").click(function() {
+            $("#dg").datagrid('load', {
+                PName: $("#sea_PName").val(),
+                PCid: $("#sea-PCid").combobox('getValue')
+            });
+        });
+    });
+
+    var url;
+    function newUser() {
+        $('#dlg').dialog('open').dialog('setTitle', '添加新产品');
+        $('#fm').form('clear');
+        $("#dialog-PContent").val('');
+        $("#iucImg").attr("src", '');
+        resetUploadImg();
+        url = '/webadmin/product/AddProduct';
+    }
+    function editUser() {
+        var sel = $('#dg').datagrid('getSelected');
+        if (sel == null) {
+            $.messager.alert("温馨提示", "请选择要编辑的产品！", "info");
+            return false;
+        }
+        $('#dlg').dialog('open').dialog('setTitle', '编辑产品');
+        $.get("/webadmin/product/GetProductInfo", { id: sel.ID }, function (productInfo) {
+            $("#dialog-PName").val(productInfo.PName);
+            $('#dialog-PCid').combobox('setValue', productInfo.PCid);
+            $("#iucImg").attr("src", productInfo.PImg).show();
+            $("#dialog-PContent").val(productInfo.PContent);
+            $("#dialog-ID").val(productInfo.ID);
+            $("#dialog-IsRecommend").prop('checked', productInfo.IsRecommend == 1);
+        });
+        url = "/webadmin/product/UpdateProductInfo";
+    }
+    
+    function saveUser() {
+        var validate = $("#fm").form("validate");
+        if (validate == false) {
+            return false;
+        }
+        var posData = {
+            ID:$("#dialog-ID").val(),
+            PName: $("#dialog-PName").val(),
+            PCid: $('#dialog-PCid').combobox('getValue'),
+            PImg: $("#iucImg").attr("src"),
+            PContent: $("#dialog-PContent").val(),
+            IsRecommend:$("#dialog-IsRecommend").prop('checked')
+        };
+        $.post(url, posData, function (data) {
+            if (data == "ok") {
+                $("#dlg").dialog('close');
+                $("#dg").datagrid("reload");
+            } else {
+                $.messager.alert("温馨提示", "内容未更新！", "info");
+            }
+        });
+    }
+    function destroyUser() {
+        var row = $('#dg').datagrid('getSelected');
+        if (row) {
+            $.messager.confirm('温馨提示', '真的要删除此产品吗?', function (r) {
+                if (r) {
+                    $.post('/webadmin/product/DeleteProduct', { ID: row.ID }, function (result) {
+                        if (result=='ok') {
+                            $('#dg').datagrid('reload');    // reload the user data
+                        } else {
+                            $.messager.show({    // show error message
+                                title: 'Error',
+                                msg: result
+                            });
+                        }
+                    });
+                }
+            });
+        } else {
+            $.messager.alert("温馨提示", "请选择要删除的产品！", "info");
+        }
+    }
+</script>
+
+
+
